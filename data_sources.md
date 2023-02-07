@@ -1,0 +1,13 @@
+# Data Sources
+[Source name + URL].  [Short Description].
+
+## APIs
+- [Mediastack](https://mediastack.com/documentation). Large selection of news articles, live and historical, multiple countries.
+- [Twitter](https://developer.twitter.com/en/docs/twitter-api). Access to tweets from twitter.
+- [Reddit](https://www.reddit.com/dev/api/). API for reddit posts, comments, users, etc.
+- [YouTube](https://developers.google.com/youtube/v3/docs/comments). YouTube comments API endpoint.
+
+## Datasets
+- [Stanford](https://snap.stanford.edu/data/amazon/productGraph/). Amazon reviews from May 1996 to July 2014. (Updated 2018: https://nijianmo.github.io/amazon/index.html).
+- [PapersWithCode](https://paperswithcode.com/datasets?task=sentiment-analysis&page=1). Collection of sentiment analysis datasets.
+- [Uc Irvine](https://archive-beta.ics.uci.edu/dataset/164/bag+of+words). Bag of words.
