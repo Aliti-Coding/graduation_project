@@ -8,6 +8,6 @@
 - [YouTube](https://developers.google.com/youtube/v3/docs/comments). YouTube comments API endpoint.
 
 ## Datasets
-- [Stanford](https://snap.stanford.edu/data/amazon/productGraph/). Amazon reviews from May 1996 to July 2014. (Updated 2018: https://nijianmo.github.io/amazon/index.html).
+- [Stanford](https://snapa.stanford.edu/data/amazon/productGraph/). Amazon reviews from May 1996 to July 2014. (Updated 2018: https://nijianmo.github.io/amazon/index.html).
 - [PapersWithCode](https://paperswithcode.com/datasets?task=sentiment-analysis&page=1). Collection of sentiment analysis datasets.
 - [Uc Irvine](https://archive-beta.ics.uci.edu/dataset/164/bag+of+words). Bag of words.
