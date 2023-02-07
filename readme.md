@@ -69,3 +69,4 @@ Ideas:
 
 # 5. Sources
 1. https://medicalxpress.com/news/2023-02-joy-caf-tweets-reveal-cities.html
+2. https://mediastack.com/documentation#example_api_response  #api for different media outlets
