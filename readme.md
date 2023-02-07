@@ -1,4 +1,4 @@
-![Project logo "irato"](IMG/irato_logo.png)
+![Project logo "irato"](IMG/irato_logo_w_background.png)
 
 # Graduation Project - irato
 [@Aliti-Coding](https://github.com/Aliti-Coding),
