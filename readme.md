@@ -6,24 +6,25 @@
 [@duggurd](https://github.com/)
 
 # Contents
-- [Graduation Project](#graduation-project)
+- [Graduation Project - irato](#graduation-project---irato)
 - [Contents](#contents)
 - [1. Sentiment Analysis](#1-sentiment-analysis)
   - [1.1. Social Media Platforms](#11-social-media-platforms)
   - [1.2. News Outlets](#12-news-outlets)
   - [1.3. Business Value](#13-business-value)
-- [2. Data](#2-data)
-  - [2.1. Data Sources](#21-data-sources)
-  - [2.2. Database](#22-database)
-- [3. Machine Learning](#3-machine-learning)
-- [4. Visualization](#4-visualization)
-- [5. Sources](#5-sources)
+- [2. Method](#2-method)
+- [3. Data](#3-data)
+  - [3.1. Data Sources](#31-data-sources)
+  - [3.2. Database](#32-database)
+- [4. Machine Learning](#4-machine-learning)
+- [5. Visualization](#5-visualization)
+- [6. Sources](#6-sources)
 
 
 # 1. Sentiment Analysis
-The basic premise is to create a model that can evaluate a piece of text's sentimental properties, ie. what underlying emotions does the piece of text convey. A decision needs to be made wether to classify purely based on "good" and "bad" or to classify more emotions *[1](#5-sources)*. Furthermore, decide to treat the problem as a binary classification problem or as a regression problem with gradients of emotions.
+The basic premise is to create a model that can evaluate a piece of text's sentimental properties, ie. what underlying emotions does the piece of text convey. A decision needs to be made wether to classify purely based on "good" and "bad" or to classify more emotions [[1]](#5-sources). Furthermore, decide to treat the problem as a binary classification problem or as a regression problem with gradients of emotions.
 
-Additionally, a text-summarization algorithm is to be implemented, so far we have looked at *term frequency–inverse document frequency [2](#5-sources)* (TF-IDF). This algorithm is to be applied to each "document" or each piece of text to extract the most important keyword or keywords from the text.
+Additionally, a text-summarization algorithm is to be implemented, so far we have looked at *term frequency–inverse document frequency* [[2]](#5-sources) (TF-IDF). This algorithm is to be applied to each "document" or each piece of text to extract the most important keyword or keywords from the text.
 
 Targeting english text.
 
