@@ -42,7 +42,7 @@ The main goal of the project is to implement a sentiment analysis model that can
 The same principle could be applied to a companies reviews for products and services to summarize the sentiment and to give a deeper insight into where a potential problem lies, its cause or it could give insight into which actions make a difference.
 
 # 2. Method
-![Fast iterative approach](IMG\Sentiment_flowchart.png)
+![Fast iterative approach](IMG/Sentiment_flowchart.png)
 *Proposed iterative method until production ready.*
 
 The foundation and core of the project is the data.
