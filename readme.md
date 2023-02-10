@@ -42,8 +42,8 @@ The main goal of the project is to implement a sentiment analysis model that can
 The same principle could be applied to a companies reviews for products and services to summarize the sentiment and to give a deeper insight into where a potential problem lies, its cause or it could give insight into which actions make a difference.
 
 # 2. Method
-![Fast iterative approach](IMG/Sentiment_flowchart.png)
-*Proposed iterative method until production ready.*
+ ![Fast iterative approach](IMG/Sentiment_flowchart.png)
+Figure 1. *Proposed iterative method until production ready.*
 
 The foundation and core of the project is the data.
 
@@ -55,7 +55,7 @@ Firstly a set of training data, which has two requirements. One, it is a piece o
 Secondly the data to use for analysis. For the [social media platforms](#11-social-media-platforms) case, that would be posts from different social media platforms, and for the second case, [news article outlets](#12-news-outlets) news articles from different sources covering the same topic or event.
 
 ## 3.1. Data Sources
-[Data sources](https://github.com/duggurd/graduation_project/blob/main/data_sources.md).
+**[[Data sources]](https://github.com/duggurd/graduation_project/blob/main/data_sources.md)**
 
 So far we have been looking at two main sources for training data. [IMDB](https://www.tensorflow.org/datasets/catalog/imdb_reviews), providing a large amount of reviews with  ratings and a pre-labeled [twitter dataset](https://www.kaggle.com/datasets/yasserh/twitter-tweets-sentiment-dataset).
 
@@ -81,4 +81,5 @@ Ideas:
 
 # 6. Sources
 1. https://medicalxpress.com/news/2023-02-joy-caf-tweets-reveal-cities.html
-2. Wikipedia. "tf-idf". wikipedia.com. https://en.wikipedia.org/wiki/Tf%E2%80%93idf.
+2. Wikipedia. tf-idf. wikipedia.com. https://en.wikipedia.org/wiki/Tf%E2%80%93idf.
+3. T. Shaik, X. Tao, C. Dann, H. Xie, Y. Li, L. Galligan. Sentiment analysis and opinion mining on educational data: A survey. 	Natural Language Processing Journal 2 (2023) 100003. https://arxiv.org/abs/2302.04359.
