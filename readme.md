@@ -1,12 +1,10 @@
-![Project logo "irato"](IMG/irato_logo_w_background.png)
-
-# Graduation Project - irato
+# Graduation Project
 [@Aliti-Coding](https://github.com/Aliti-Coding),
 [@mats-bb](https://github.com/mats-bb),
 [@duggurd](https://github.com/)
 
 # Contents
-- [Graduation Project - irato](#graduation-project---irato)
+- [Graduation Project](#graduation-project)
 - [Contents](#contents)
 - [1. Sentiment Analysis](#1-sentiment-analysis)
   - [1.1. Social Media Platforms](#11-social-media-platforms)
