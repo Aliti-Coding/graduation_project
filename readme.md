@@ -32,7 +32,10 @@ Apply the trained model to analyze different social media plattforms for their i
 ## 1.2. News Outlets
 Proof of concept case. Applying the model on different news article outlets and comparing their sentimental values for the same covered event. 
 
-Idea could be further used to classify political orientation of different news outlets and individual articles, but out of scope for this project.
+Classify political orientation of different news outlets and individual articles, but out of scope for this project.
+
+Use tf-idf for the same covered event to give a summary on the different news article. We can then compare the articles and see 
+what words are used.
 
 ## 1.3. Business Value
 The main goal of the project is to implement a sentiment analysis model that can be used on any piece of english text. As a creator on for example YouTube the model could be used to analyse comments over time to pinpoint potential problems with content without needing to read all the comments.
