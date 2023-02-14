@@ -8,8 +8,12 @@ __pycache__/
 
 # Key files
 *.key
+
 # Ignore data files
 data/*
+
+# Ignore checkpoints
+checkpoints/*
 
 # Distribution / packaging
 .Python
