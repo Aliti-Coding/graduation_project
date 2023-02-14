@@ -84,7 +84,7 @@ print(f'Test MSE XG : {np.sqrt(mse_test_xg)}')
 print()
 mae_test_xg = mean_absolute_error(y_test, y_test_pred)
 print(f'Test MAE XG : {mae_test_xg}') 
-
+#test
 
 
 
