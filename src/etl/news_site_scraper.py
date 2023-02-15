@@ -10,12 +10,21 @@ def scrape_news_page(url, session:CachedSession) -> str:
         features="html.parser"
     )
 
-    # Find main article text
+    # Aljazeera is completly missing article tag on articles
+    if "aljazeera" in url:
+        article = (soup.find("main") 
+            .find("div", "wysiwyg wysiwyg--all-content css-ibbk12")
+        )
+
+        return article.text if article else ""
+    
+    # Find article in text
     article = soup.find("article")
     
     # Foxnews has different article setup than other sites
     if "foxnews" in url:
         article = article.find("div", "article-body")
+    
 
     return article.text if article else ""
 
