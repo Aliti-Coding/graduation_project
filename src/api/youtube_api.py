@@ -6,59 +6,73 @@
 import os
 import json
 import googleapiclient.discovery
+import pandas as pd
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
+
+with open("azure_pg_database_connection.key", "r") as file:
+    conn_string = file.read()
+    conn_string = "postgresql" + conn_string
+    
+engine = create_engine(fr"{conn_string}")
 
 
-#bygger url for å gjøre call
-
-comments_lst = []
-comment_published_lst = []
 
 
-api_service_name = "youtube"
-api_version = "v3"
-with open("google_api_key.key") as file:
-    DEVELOPER_KEY = file.read()
+def api_call():
 
-youtube = googleapiclient.discovery.build(
-    api_service_name, api_version, developerKey = DEVELOPER_KEY)
+    #dict added to DataFrame
+    dict_to_df = {
+        "publish_date": [],
+        "comment_text": []
+    }
 
-nextpagetoken = ""
+    #setup from calling to youtube api
+    api_service_name = "youtube"
+    api_version = "v3"
+    with open(fr"..\..\..\..\google_api_key.key") as file: #add you googleapikey
+        DEVELOPER_KEY = file.read()
 
-request = youtube.commentThreads().list(
-    part="snippet,replies",
-    videoId="retIj7ztcSE",
-    maxResults=1000
-)
-response = request.execute()
+    youtube = googleapiclient.discovery.build(
+        api_service_name, api_version, developerKey = DEVELOPER_KEY)
 
-#use loop under only for extracting more comments by pageToken
-#______________________________________________________________________________________________
-flag = 5 #how many time you going to loop next page
-while flag > 0:
     request = youtube.commentThreads().list(
-    part="snippet,replies",
-    videoId="retIj7ztcSE",
-    pageToken=response['nextPageToken'],
-    maxResults=10 # decide how many comments to extract for each request
+        part="snippet,replies",
+        videoId="retIj7ztcSE",
+        maxResults=10
     )
     response = request.execute()
 
+    #use loop under only for extracting more comments by pageToken
+    #______________________________________________________________________________________________
+    flag = 5 #how many time you going to loop next page
+    while flag > 0:
+        request = youtube.commentThreads().list(
+        part="snippet,replies",
+        videoId="retIj7ztcSE",
+        pageToken=response['nextPageToken'],
+        maxResults=50 # decide how many comments to extract for each request
+        )
+        response = request.execute()
 
-    for comments in response['items']:
-        text_display = comments['snippet']['topLevelComment']['snippet']['textOriginal']
-        publishdate = comments['snippet']['topLevelComment']['snippet']['publishedAt']
-        comments_lst.append(text_display)
-        comment_published_lst.append(publishdate)
+        for comments in response['items']:
+            text_display = comments['snippet']['topLevelComment']['snippet']['textOriginal']
+            publishdate = comments['snippet']['topLevelComment']['snippet']['publishedAt']
+            
+        
+            dict_to_df['publish_date'].append(publishdate)
+            dict_to_df['comment_text'].append(text_display)
+            
+        
 
-    # nextpagetoken = response['nextPageToken']
-    flag -= 1
+      
+        flag -= 1
+
+    
+    df = pd.DataFrame(data=dict_to_df)
+    return df
+
+df = api_call()
 
 
+df.to_sql('youtube_comments', con=engine, if_exists='append', index=False)
 
-    # with open(fr'youtube_data_{flag}.json', 'w') as outfile:
-    #     json.dump(response, outfile, indent=4)
-
-
-
-
-print(len(comments_lst))

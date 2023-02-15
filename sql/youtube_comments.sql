@@ -1,5 +1,5 @@
 create table if not exists youtube_comments (
-    id int not null,
+    id SERIAL PRIMARY KEY,
     publish_date date,
     comment_text text
 )
