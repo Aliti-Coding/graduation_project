@@ -3,5 +3,6 @@ create table if not exists news_articles (
     title text,
     articleText text,
     publishedDate date,
-    author text
+    author text,
+    topic text
 )
