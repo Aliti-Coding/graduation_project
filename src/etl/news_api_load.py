@@ -106,13 +106,18 @@ def articles_to_df(raw_news_articles:str) -> pd.DataFrame:
     df["source"] = df["source"].apply(lambda x: x["id"])
     del df["urlToImage"]
 
+    df["publishedAt"] = pd.to_datetime(df["publishedAt"])
+
     return df
 
 
 def df_to_sql(df, conn_or_engine):
     df.to_sql(
         TABLE_NAME,
-        conn=conn_or_engine,
+        chunksize=1,
+        con=conn_or_engine,
         if_exists="append",
-        index=False,
+        index=False
     )
+
+print("hello")
