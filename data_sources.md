@@ -22,3 +22,4 @@
 - [ABC News](https://abcnews.go.com/)
 - [CNN](https://edition.cnn.com/)
 - [Reuters](https://www.reuters.com/)
+- [Aljazeera](https://www.aljazeera.com/)
