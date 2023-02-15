@@ -16,3 +16,9 @@
 
 ## Lexicons
 - [Nrc](https://nrc.canada.ca/en/research-development/products-services/technical-advisory-services/sentiment-emotion-lexicons). Multiple lexicons of words with correlated emotions, and lexicons of words with binary emotion. Also lists relevant research papers.
+
+## News sites
+- [Fox News](https://www.foxnews.com/)
+- [ABC News](https://abcnews.go.com/)
+- [CNN](https://edition.cnn.com/)
+- [Reuters](https://www.reuters.com/)
