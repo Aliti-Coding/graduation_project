@@ -9,6 +9,10 @@ __pycache__/
 # Key files
 *.key
 
+# Database files
+*.sqlite
+*.db
+
 # Ignore data files
 data/*
 
