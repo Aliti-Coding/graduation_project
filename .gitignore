@@ -16,8 +16,9 @@ __pycache__/
 # Ignore data files
 data/*
 
-# Ignore checkpoints
+# Ignore checkpoints and saved models
 checkpoints/*
+saved_models/*
 
 # Distribution / packaging
 .Python
