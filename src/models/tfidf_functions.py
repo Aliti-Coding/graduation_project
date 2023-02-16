@@ -78,3 +78,22 @@ def words_in_corpus(clean_text):
 
 # words_in_corpus(clean_data("Books_5_partition_1.csv"))
 #test
+
+    
+def clean_data_df_youtube(DataFrame, num=None):
+    """ reads a dataframe and cleans text column
+
+    Args:
+        filepath (_str_): _filepath of the csv file_
+
+    Returns:
+        _DataFrame_: _returns a list with clean text with no stopwords_
+    """
+    
+    # print(df_orig.isna().sum())
+    DataFrame = DataFrame.dropna()
+    DataFrame = DataFrame.reset_index(drop=True)
+    clean_review = [review_to_words(DataFrame['comment_text'][row]) for row in range(0, len(DataFrame['comment_text']))]
+ 
+    DataFrame['preprocessed'] = clean_review
+    return DataFrame

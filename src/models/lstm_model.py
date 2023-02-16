@@ -23,7 +23,6 @@ def load_model_weights_from_checkpoint(model:keras.Model=None) -> keras.Model:
 
     return model
 
-    
 def create_lstm_model() -> keras.Model:
     """
     Create an empty sequential lstm model.
