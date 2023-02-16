@@ -85,3 +85,4 @@ Ideas:
 2. Wikipedia. tf-idf. wikipedia.com. https://en.wikipedia.org/wiki/Tf%E2%80%93idf.
 3. T. Shaik, X. Tao, C. Dann, H. Xie, Y. Li, L. Galligan. Sentiment analysis and opinion mining on educational data: A survey. 	Natural Language Processing Journal 2 (2023) 100003. https://arxiv.org/abs/2302.04359.
 4. Media Bias Chart. https://www.allsides.com/media-bias/media-bias-chart.
+5. Nhan Cach Dang, María N. Moreno-García, Fernando De la Prieta. Sentiment Analysis Based on Deep Learning: A Comparative Study. arxiv.org. https://arxiv.org/abs/2006.03541
