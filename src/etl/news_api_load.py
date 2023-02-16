@@ -114,10 +114,7 @@ def articles_to_df(raw_news_articles:str) -> pd.DataFrame:
 def df_to_sql(df, conn_or_engine):
     df.to_sql(
         TABLE_NAME,
-        chunksize=1,
         con=conn_or_engine,
         if_exists="append",
         index=False
     )
-
-print("hello")
