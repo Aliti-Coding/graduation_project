@@ -13,6 +13,7 @@
 - [Stanford](https://snapa.stanford.edu/data/amazon/productGraph/). Amazon reviews from May 1996 to July 2014. (Updated 2018: https://nijianmo.github.io/amazon/index.html).
 - [PapersWithCode](https://paperswithcode.com/datasets?task=sentiment-analysis&page=1). Collection of sentiment analysis datasets.
 - [Uc Irvine](https://archive-beta.ics.uci.edu/dataset/164/bag+of+words). Bag of words.
+- [Stanford](https://paperswithcode.com/dataset/sentiment140). Sentiment140 dataset, 16 mil pre-labeled tweets.
 
 ## Lexicons
 - [Nrc](https://nrc.canada.ca/en/research-development/products-services/technical-advisory-services/sentiment-emotion-lexicons). Multiple lexicons of words with correlated emotions, and lexicons of words with binary emotion. Also lists relevant research papers.
