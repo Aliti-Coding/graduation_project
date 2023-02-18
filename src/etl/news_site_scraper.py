@@ -22,7 +22,7 @@ def scrape_news_page(url, session:CachedSession) -> str:
     article = soup.find("article")
     
     # Foxnews has different article setup than other sites
-    if "foxnews" in url:
+    if "foxnews" in url and article:
         article = article.find("div", "article-body")
     
 
@@ -31,6 +31,8 @@ def scrape_news_page(url, session:CachedSession) -> str:
 
 def get_page_content(url, session:CachedSession):
     resp = session.get(url)
-    assert resp.ok
+    if not resp.ok:
+        print(resp.content)
+        raise Exception("error")
 
     return resp.content
