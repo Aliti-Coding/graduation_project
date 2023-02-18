@@ -2,9 +2,10 @@ import sys
 sys.path.append(r"C:\Users\fehmm\OneDrive\Skrivebord\python\graduation_project")
 
 
+import pandas as pd
 #select table from database youtube comments
 #use the predifined functions to make predictions on the comments
-import keras
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 
 from keras import layers
 from keras.layers import TextVectorization
@@ -15,8 +16,6 @@ from src.models.tfidf_functions import clean_data_df_youtube
 print("Post-import")
 import os
 import json
-import pandas as pd
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 
 with open("azure_pg_database_connection.key", "r") as file:
     conn_string = file.read()
@@ -24,7 +23,8 @@ with open("azure_pg_database_connection.key", "r") as file:
     
 engine = create_engine(fr"{conn_string}")
 
-df = pd.read_sql('select * from youtube_comments', con=engine)
+
+df = pd.read_sql('youtube_comments', con=engine)
 
 
 
@@ -40,7 +40,7 @@ def load_model_weights_from_checkpoint(model:keras.Model=None) -> keras.Model:
     if not model:
         model = create_lstm_model()
     
-    model.load_weights(r"..\..\..\..\Brights\Alexander Haugerud - Graduation Project\saved_models\lstm_model_24_24_250k_rows\model")
+    model.load_weights(r"C:\Users\fehmm\Brights\Alexander Haugerud - Graduation Project\saved_models\lstm_model_24_24_250k_rows")
 
     return model
 
