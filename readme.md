@@ -49,7 +49,7 @@ The same principle could be applied to a companies reviews for products and serv
 
 ## 2. Method
 
- ![Fast iterative approach](IMG/Sentiment_flowchart.png)
+ ![Fast iterative approach](images/Sentiment_flowchart.png)
 Figure 1. *Proposed iterative method until production ready.*
 
 The foundation and core of the project is the data.
