@@ -11,8 +11,8 @@ from keras import layers
 from keras.layers import TextVectorization
 import tensorflow as tf
 
-from src.models.lstm_model import create_lstm_model
-from src.models.tfidf_functions import clean_data_df_youtube
+from models.neural_networks.lstm_model import create_lstm_model
+from models.tf_idf.tfidf_functions import clean_data_df_youtube
 print("Post-import")
 import os
 import json
