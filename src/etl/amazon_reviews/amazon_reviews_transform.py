@@ -7,7 +7,15 @@ import os
 np.random.seed(0)
 
 
-def extract_transform_amazon_reviews(filepath:str, outpath:str=None, features:list=None, chunksize:int=500000, chunks_to_load:int=1, max_words:int=150) -> None:
+def extract_transform_amazon_reviews(
+        filepath:str, 
+        outpath:str=None, 
+        features:list=None, 
+        chunksize:int=500000, 
+        chunks_to_load:int=1,
+        max_words:int=150
+    ) -> None:
+    
     """
     Extract and transform amazon reviews dataset to new csv file.
 
@@ -58,11 +66,16 @@ def extract_transform_amazon_reviews(filepath:str, outpath:str=None, features:li
         save_chunk(df, datapath=filepath)
 
 
-def transform_chunk(df, features:list=None, max_words:int=150) -> pd.DataFrame:
-    """
-    Transform an extract amazon review chunk.
+def transform_chunk(
+        df, 
+        features:list=None, 
+        max_words:int=150
+    ) -> pd.DataFrame:
 
     """
+    Transform an extract amazon review chunk.
+    """
+
     if features:
         df = extract_features(df, features)
 
@@ -138,9 +151,13 @@ def balance_neg_pos_of_reviews(df:pd.DataFrame) -> pd.DataFrame:
     return df_balanced
 
 
-def fill_empty_reviews_convert_to_string(df:pd.DataFrame, review_text_column:str="reviewText") -> pd.DataFrame:
+def fill_empty_reviews_convert_to_string(
+        df:pd.DataFrame, 
+        review_text_column:str="reviewText"
+    ) -> pd.DataFrame:
+
     """
-    Fill in nan valued reviews with empty strings, then convert the column to string dtype.
+    Fills in nan valued reviews with empty strings, then convert the column to string dtype.
     """
     
     df[review_text_column] = (
@@ -152,7 +169,12 @@ def fill_empty_reviews_convert_to_string(df:pd.DataFrame, review_text_column:str
     return df
 
 
-def cut_reviews_to_max_words(df:pd.DataFrame, max_words:int, review_text_column:str="reviewText") -> pd.DataFrame: 
+def cut_reviews_to_max_words(
+        df:pd.DataFrame, 
+        max_words:int, 
+        review_text_column:str="reviewText"
+    ) -> pd.DataFrame: 
+    
     """
     Cuts reviews down to maximum soecified length.
     """
@@ -165,7 +187,11 @@ def cut_reviews_to_max_words(df:pd.DataFrame, max_words:int, review_text_column:
 
 
 
-def remove_empty_reviews(df:pd.DataFrame, review_text_colum:str="reviewText") -> pd.DataFrame:
+def remove_empty_reviews(
+        df:pd.DataFrame, 
+        review_text_colum:str="reviewText"
+    ) -> pd.DataFrame:
+    
     """
     Remove rows where reviews are empty strings.
     """
@@ -177,7 +203,12 @@ def remove_empty_reviews(df:pd.DataFrame, review_text_colum:str="reviewText") ->
     return df
 
 
-def convert_column_to_dt(df:pd.DataFrame, date_column:str="unixReviewTime", unit:str="s") -> pd.DataFrame:
+def convert_column_to_dt(
+        df:pd.DataFrame, 
+        date_column:str="unixReviewTime", 
+        unit:str="s"
+    ) -> pd.DataFrame:
+
     """
     Converts the specified column to datetime format
     """
@@ -192,7 +223,7 @@ def save_chunk(df, datapath:str=None, outpath:str=None) -> None:
 
     Either `datapath` or `outpath` must be specified.
     """
-    
+
     if datapath:
         
         path = pathlib.Path(datapath)
