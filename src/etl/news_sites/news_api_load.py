@@ -28,7 +28,13 @@ def create_news_api_client():
     )
     
 
-def get_all_news(query=None, time_from:datetime.date=None, time_to:datetime.date=None, page:int=None) -> str:
+def get_all_news(
+        query=None, 
+        time_from:datetime.date=None, 
+        time_to:datetime.date=None, 
+        page:int=None
+    ) -> str:
+    
     """
     Search through all of [newsapi's](https://newsapi.org/) existing articles.
 
