@@ -32,7 +32,7 @@ def extract_transform_amazon_reviews(
     Each loaded and transformed chunk is stored as a partitioned csv file.
 
     ## NOTE:
-    This functions doesn't remove punctuation and convert text to lowercase, responsibility of tokenizer in ML workloads.
+    This functions doesn't remove punctuation and convert text to lowercase, responsibility of tokenizer in ML workload.
 
     ## Params:
     filepath: path,
@@ -174,7 +174,7 @@ def cut_reviews_to_max_words(
         max_words:int, 
         review_text_column:str="reviewText"
     ) -> pd.DataFrame: 
-    
+
     """
     Cuts reviews down to maximum soecified length.
     """
