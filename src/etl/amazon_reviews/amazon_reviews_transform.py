@@ -7,7 +7,7 @@ import os
 np.random.seed(0)
 
 
-def extract_amazon_reviews(filepath:str, outpath:str=None, features:list=None, chunksize:int=500000, chunks_to_load:int=1, max_words:int=150) -> None:
+def extract_transform_amazon_reviews(filepath:str, outpath:str=None, features:list=None, chunksize:int=500000, chunks_to_load:int=1, max_words:int=150) -> None:
     """
     Extract and transform amazon reviews dataset to new csv file.
 
@@ -139,6 +139,10 @@ def balance_neg_pos_of_reviews(df:pd.DataFrame) -> pd.DataFrame:
 
 
 def fill_empty_reviews_convert_to_string(df:pd.DataFrame, review_text_column:str="reviewText") -> pd.DataFrame:
+    """
+    Fill in nan valued reviews with empty strings, then convert the column to string dtype.
+    """
+    
     df[review_text_column] = (
         df[review_text_column]
         .fillna("")
@@ -149,7 +153,10 @@ def fill_empty_reviews_convert_to_string(df:pd.DataFrame, review_text_column:str
 
 
 def cut_reviews_to_max_words(df:pd.DataFrame, max_words:int, review_text_column:str="reviewText") -> pd.DataFrame: 
-    
+    """
+    Cuts reviews down to maximum soecified length.
+    """
+
     cut_review_text = lambda x: " ".join(x.split()[:max_words])
 
     df[review_text_column] = df[review_text_column].apply(cut_review_text)
@@ -159,6 +166,10 @@ def cut_reviews_to_max_words(df:pd.DataFrame, max_words:int, review_text_column:
 
 
 def remove_empty_reviews(df:pd.DataFrame, review_text_colum:str="reviewText") -> pd.DataFrame:
+    """
+    Remove rows where reviews are empty strings.
+    """
+
     df = df.loc[
         df[review_text_colum] != "", :
     ]
@@ -167,11 +178,20 @@ def remove_empty_reviews(df:pd.DataFrame, review_text_colum:str="reviewText") ->
 
 
 def convert_column_to_dt(df:pd.DataFrame, date_column:str="unixReviewTime", unit:str="s") -> pd.DataFrame:
+    """
+    Converts the specified column to datetime format
+    """
+    
     df[date_column] = pd.to_datetime(df[date_column], unit=unit)
     return df
 
 
 def save_chunk(df, datapath:str=None, outpath:str=None) -> None:
+    """
+    Saves a loaded chunk/df, named based on `datapath`.
+
+    Either `datapath` or `outpath` must be specified.
+    """
     
     if datapath:
         
