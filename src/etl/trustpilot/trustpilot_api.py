@@ -15,7 +15,47 @@ class TrustPilotApi:
         self._base_url = "https://www.trustpilot.com/_next/data/businessunitprofile-consumersite-7193/review/"
         self.session = CachedSession("trustpilot_api")
     
+    def get_reviews_multiple_pages(
+            self,
+            company_website:str,
+            num_pages:int=1,
+            start_page:int=1,
+            clean:bool=True,
+            sort:str="recency",
+            date:str="",
+            stars:str=""
+        ) -> list:
+
+        """
+        Get reviews for `company_website` over multiple pages.
+        """
+
+        reviews = []
+
+        for page in range(start_page, start_page+num_pages):
+            if clean:
+                reviews += self.get_clean_reviews(
+                    company_website,
+                    page,
+                    sort,
+                    date,
+                    stars
+                )
+            
+            elif not clean:
+                reviews.append(
+                    self.get_reviews(
+                        company_website,
+                        page,
+                        sort,
+                        date,
+                        stars
+                    )
+                )
         
+        return reviews
+
+
     def get_reviews(
             self,
             company_website:str,
