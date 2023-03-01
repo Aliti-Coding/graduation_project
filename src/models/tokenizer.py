@@ -1,10 +1,12 @@
 import pandas as pd
 from keras.layers import TextVectorization
-
+from typing import TypeVar, Type
 
 class Tokenizer(TextVectorization):
     """
-    Simple abstract wrapper class for `keras.layers.TextVectorization`.
+    Simple abstract wrapper class for `keras.layers.TextVectorization` with some extra utility functions.
+
+    Easier to use as a standalone tokenizer.
 
     The class inherits from the `TextVectorization` class.
     """
@@ -63,7 +65,7 @@ class Tokenizer(TextVectorization):
 
 
     @classmethod
-    def from_vocabulary_file(cls, filepath:str, sequence_length) -> Tokenizer:
+    def from_vocabulary_file(cls, filepath:str, sequence_length:int) -> Type["Tokenizer"]:
         """
         Construct Tokenizer from a vocabulary file.
 
