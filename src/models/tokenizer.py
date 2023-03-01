@@ -3,9 +3,11 @@ from keras.layers import TextVectorization
 
 
 class Tokenizer(TextVectorization):
+
+
     def __init__(self, max_tokens=15000, sequence_length=100, vocabulary=None):
         """
-        Construct the tokenizer.
+        Construct the tokenizer. This tokenizer strips punctuation and lowercases text.
 
         ## Params:
         max_tokens: upper limit,
