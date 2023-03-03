@@ -2,7 +2,7 @@ import newsapi
 import pandas as pd
 import datetime
 from requests_cache import CachedSession
-from news_site_scraper import scrape_news_page
+from typing import Optional
 
 NEWS_SOURCES = "abc-news,fox-news,cnn,reuters,al-jazeera-english"
 
@@ -16,17 +16,17 @@ class NewsApiLoader:
 
     def __init__(
             self,
-            newsapi_key:str,
-            news_sources:str=None,
-            source_language:str="en"
+            newsapi_key: str,
+            news_sources: Optional[str] = None,
+            source_language: str = "en"
         ) -> None:
 
         """
-        ## Params:
+        ## Parameters
         newsapi_key: str, api-key,
             your api-key to NewsAPI.
 
-        news_sources: str,
+        news_sources: str, optional,
             a string of news sources to get articles from seperated by ','. Ex. "abc-news, fox-news, cnn".
         
         source_language:str, iso-format,
@@ -50,13 +50,13 @@ class NewsApiLoader:
 
     def search_all_articles(
             self,
-            query=None,
-            time_from:datetime.date=None,
-            time_to:datetime.date=None,
-            page:int=None,
-            overwrite=False,
-        
+            query = None,
+            time_from: Optional[datetime.date] = None,
+            time_to: Optional[datetime.date] = None,
+            page: Optional[int] = None,
+            overwrite: bool = False,
         ) -> None:
+        
         """
         Search through all of [newsapi's](https://newsapi.org/) existing articles.
 
@@ -64,8 +64,7 @@ class NewsApiLoader:
 
         Get the result through the classes `df` property.
         
-        ## Params:
-        
+        ## Parameters
         query: str, search-term,
             find articles with titles and bodies matchin the query
 
@@ -101,13 +100,13 @@ class NewsApiLoader:
 
         self.raw_articles_to_df(news_articles)
     
-    def curret_top_headlines(
+    def current_top_headlines(
             self,
-            query:str=None,
-            category:str=None,
-            page:int=None,
-            page_size:int=100,
-            overwrite=False,
+            query: Optional[str] = None,
+            category: Optional[str] = None,
+            page: Optional[int] = None,
+            page_size: int = 100,
+            overwrite: bool = False,
         ) -> None:
 
         """
@@ -136,8 +135,8 @@ class NewsApiLoader:
     
     def raw_articles_to_df(
             self, 
-            raw_news_articles:str,
-            overwrite:bool,
+            raw_news_articles: str,
+            overwrite: bool = False,
         ) -> None:
 
         """
