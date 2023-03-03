@@ -1,12 +1,13 @@
 import pandas as pd
 import numpy as np
+from numpy.random import RandomState
 import os
 
 from pandas.io.json._json import JsonReader
 
 from typing import List, Optional, Union, Callable
 
-np.random.seed(0)
+
 
 
 class AmazonReviewsExtractor(JsonReader):
@@ -14,7 +15,9 @@ class AmazonReviewsExtractor(JsonReader):
     AmazonReviewsExtractor, extracts and transforms amazon reviews like [these](https://nijianmo.github.io/amazon/index.html).
 
     Class is based on and inherits from pandas.JsonReader.
+
     """
+
     def __init__(
             self,
             path_or_buf: Union[str, os.PathLike],
@@ -32,6 +35,10 @@ class AmazonReviewsExtractor(JsonReader):
         ) -> None:
 
         """
+        If possible convert_dates should never be called on the column `"reviewTime"` as pandas struggles to parse it, use `"unixReviewTime"` instead.    
+        
+        Time complexity to load and transform grows more than proportionally with chunksize ie. two chunks of 500_000 rows loads faster than one at 1_000_000 rows.
+        
         ## Params
         path_or_buf: pathlike,
             path to file to load data from, should be `.json`,
@@ -121,6 +128,8 @@ class AmazonReviewsExtractor(JsonReader):
 
         self._loaded_chunks = 0
 
+        self._rs = RandomState(0)
+
 
     def __next__(self) -> Union[pd.DataFrame, None]:
         """
@@ -181,8 +190,14 @@ class AmazonReviewsExtractor(JsonReader):
             )
 
         if self.drop_empty_reviews:
-            df = df[df[self.review_text_column] != ""]
+            df = df.loc[df[self.review_text_column] != "",:]
 
+        # Might improve performance in some rare cases, commented out for convenience
+        # Parsing dates directly in JsonReader is a bit faster 
+        # if self.convert_dates:
+        #     for column in self.convert_dates:
+        #         df[column] = pd.to_datetime(df[column])
+        
         return df
 
 
@@ -216,7 +231,7 @@ class AmazonReviewsExtractor(JsonReader):
         if num_positive > num_negative:
             rows_to_drop = num_positive - num_negative
 
-            index = np.random.choice(
+            index = self._rs.choice(
                 a=df.query("overall == 4 or overall == 5").index, 
                 size=rows_to_drop, 
                 replace=False
@@ -225,7 +240,7 @@ class AmazonReviewsExtractor(JsonReader):
         elif num_negative > num_positive:
             rows_to_drop = num_negative - num_positive
             
-            index = np.random.choice(
+            index = self._rs.choice(
                 a=df.query("overall == 1 or overall == 2").index, 
                 size=rows_to_drop, 
                 replace=False
@@ -247,7 +262,7 @@ class AmazonReviewsExtractor(JsonReader):
             if num_neutral > avg_value_count_non_neutral:
                 rows_to_drop = num_neutral - avg_value_count_non_neutral
 
-                index = np.random.choice(
+                index = self._rs.choice(
                     a=df.query("overall == 3").index, 
                     size=rows_to_drop, 
                     replace=False
