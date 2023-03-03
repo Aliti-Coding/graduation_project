@@ -185,8 +185,8 @@ class AmazonReviewsExtractor(JsonReader):
         )
 
         if self.maximum_words:
-            df = df.apply(
-                lambda x: " ".join(x.split)[:self.maximum_words]
+            df[self.review_text_column] = df[self.review_text_column].apply(
+                lambda x: " ".join(x.split())[:self.maximum_words]
             )
 
         if self.drop_empty_reviews:
@@ -221,7 +221,8 @@ class AmazonReviewsExtractor(JsonReader):
         assert (
             self.ratings_column in df.columns 
             and 
-            self.review_text_column in df.columns
+            self.review_text_column in df.columns,
+            "Ratings column and review text column must be in DataFrame to balance reviews."
         )
 
         value_counts = df[self.ratings_column].value_counts()
