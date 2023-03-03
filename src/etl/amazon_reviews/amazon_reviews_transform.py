@@ -1,240 +1,282 @@
 import pandas as pd
 import numpy as np
-import pathlib
-import re
 import os
+
+from pandas.io.json._json import JsonReader
+
+from typing import List, Optional, Union, Callable
 
 np.random.seed(0)
 
 
-def extract_transform_amazon_reviews(
-        filepath:str, 
-        outpath:str=None, 
-        features:list=None, 
-        chunksize:int=500000, 
-        chunks_to_load:int=1,
-        max_words:int=150
-    ) -> None:
-    
+class AmazonReviewsExtractor(JsonReader):
     """
-    Extract and transform amazon reviews dataset to new csv file.
+    AmazonReviewsExtractor, extracts and transforms amazon reviews like [these](https://nijianmo.github.io/amazon/index.html).
 
-    The transformations are as follows:
-        - Load the chunk
-        - Balance number of negative and positive reviews
-        - Remove null values
-        - Remove reviews with no text
-        - Cut reviews to maximum length
-        - Convert datecolumn to datetime
-
-    Total loaded/transformed rows equals `chunksize * chunks_to_load`.
-
-    Each loaded and transformed chunk is stored as a partitioned csv file.
-
-    ## NOTE:
-    This functions doesn't remove punctuation and convert text to lowercase, responsibility of tokenizer in ML workload.
-
-    ## Params:
-    filepath: path,
-        Path to amazon reviews dataset file.
-
-    outpath: path,
-        where to save transformed data.
-    
-    chunksize: pandas chunksize,
-        Pandas datafram loader chunksize, should be between 1 and 1,000,000.
-
-    chunks_to_load: num chunks,
-        The number of chunks to load, number of total rows equals `chunksize * chunks_to_load`.
-
-    max_words: upper bound,
-        The maximum number of words in the reviewText of a review.
-
-    ## Returns:
-    None, saved_to_file
+    Class is based on and inherits from pandas.JsonReader.
     """
+    def __init__(
+            self,
+            path_or_buf: Union[str, os.PathLike],
+            chunksize: int = 100_000,
+            features: Optional[List[str]] = None,
+            maximum_words: Optional[int] = None,
+            review_text_columnn: str = "reviewText",
+            drop_empty_reviews: bool = True,
+            ratings_column: str = "overall",
+            balance_num_pos_neg_ratings: bool = True,
+            balance_neutral_reviews: bool = False,
+            convert_dates: Union[bool, List[str]] = ["reviewTime"],
+            outdir: Optional[Union[str, os.PathLike]] = None,
+            save_method: Optional[Callable[[pd.DataFrame, os.PathLike], None]] = None
+        ) -> None:
 
-    reader = pd.read_json(
-        path_or_buf=filepath,
-        lines=True,
-        chunksize=chunksize
-    )
+        """
+        ## Params
+        path_or_buf: pathlike,
+            path to file to load data from, should be `.json`,
+            can be compressed as long as pandas is able to infer compression type.
 
-    for chunk_n in chunks_to_load:
-        df = reader.__next__()
-        df = transform_chunk(df, max_words, features)
-        save_chunk(df, datapath=filepath)
+        chunksize: int,
+            the size of each chunk to load from data source (`path_or_buf`).
+
+        features: list of feature names, optional,
+            the features to extract from each chunk/DataFrame, 
+            might have downstream effects on pipeline depending on what is included.
+
+        maximum_words: int, optional,
+            if specified sets the maximum number of words a reviewText can have, 
+            longer are cut to length of maximum_words.
+        
+        review_text_column: str,
+            specifies which column contains the reviews text. Default is "reviewText".
+
+        drop_empty_reviews: bool,
+            drop rows where reviews only contain empty strings.
+
+        ratings_column: str,
+            specifies the name of the column that contains the ratings of the reviews. 
+            Default is "overall".
+        
+        balance_num_pos_neg_ratings: bool,
+            undersampling so that the total number of positive (`rating>3`) and negative (`rating<3`) reviews are equal.
+            The ratings column and review text column must be in the DataFrame.
+
+        balance_neutral_reviews: bool,
+            balance the number of neutral reviews (`rating==3`) to the average of negative and positive reviews.
+
+        convert_dates: bool or list[str],
+            optimistic if using bool, or specify the names of columns to convert to datetime objects.
+
+        outdir: pathlike, optional,
+            if specified overloads iterator functionality, 
+            now saves each chunk to `outdir` instead of returning a DataFrame.
+        
+        save_method: function or callable, optional,
+            if not specified chunks are saved as `.csv` files. Use this to save chunks in other file formats.
+            The callable should take two arguments a `DataFrane` and a `PathLike` which can be overridden for different ways of saving.
 
 
-def transform_chunk(
-        df, 
-        features:list=None, 
-        max_words:int=150
-    ) -> pd.DataFrame:
+        ## Examples
 
-    """
-    Transform an extract amazon review chunk.
-    """
+        Example `save_method` function: 
+            >>> lambda df, path: pd.DataFrame.to_json(df, path)
 
-    if features:
-        df = extract_features(df, features)
+        
 
-    df = balance_neg_pos_of_reviews(df)
+        
+        """
+        super().__init__(
+            path_or_buf,
+            orient = None,
+            typ = "frame",
+            dtype = None,
+            convert_axes = None,
+            convert_dates = convert_dates,
+            keep_default_dates = True,
+            numpy = False,
+            precise_float = False,
+            date_unit  = None,
+            encoding = None,
+            encoding_errors = "strict",
+            lines = True,
+            chunksize = chunksize,
+            compression = "infer",
+            nrows = None,
+            storage_options = None,
+        )
+        
+        self.path_or_buf = path_or_buf
+        self.chunksize = chunksize
+        self.features = features
+        self.maximum_words = maximum_words
+        self.review_text_column = review_text_columnn
+        self.drop_empty_reviews = drop_empty_reviews
+        self.ratings_column = ratings_column
+        self.balance_num_pos_neg_rating = balance_num_pos_neg_ratings
+        self.balance_neutral_reviews = balance_neutral_reviews
+        self.convert_dates = convert_dates
+        self.outdir = outdir
+        self.save_method = save_method
 
-    df = fill_empty_reviews_convert_to_string(df, "reviewText")
-
-    df = cut_reviews_to_max_words(df, max_words, "reviewText")
-
-    df = remove_empty_reviews(df, "reviewText")
-
-    df = convert_column_to_dt(df, "unixReviewTime", "s")
-
-    return df
+        self._loaded_chunks = 0
 
 
-def extract_features(df, features:list) -> pd.DataFrame:
-    return df.loc[:, features]
+    def __next__(self) -> Union[pd.DataFrame, None]:
+        """
+        Loads next chunk, or loads and saves the next chunk if `outpath` is specified.
+        """
+        self._loaded_chunks += 1
 
+        df = super().__next__()
+        if not self.outdir:
+            return self._transform_chunk(df)
 
-def balance_neg_pos_of_reviews(df:pd.DataFrame) -> pd.DataFrame:
-    """
-    Balances number of positive reviews and negative reviews by undersampling the overrepresented class.
-
-    Neutral, ie. reviews with score of 3 are not balanced, might therefore be overrepresented.
-
-    ## Params:
-    df: Pandas DataFrame,
-        a Pandas DataFrame containing the raw reviews loaded from csv.
+        elif self.outdir:
+            self._save_chunk(df)
     
-    ## Returns:
-    Balanced dataframe.
+    def transform(self, df:pd.DataFrame) -> Union[pd.DataFrame, None]:
+        """
+        TODO:
+        - Function should be callable as a class method
+        - Transform based on config or similar
+        - Transform without instantiating a class instance manually
+        """
+        
+        raise NotImplementedError
 
-    ## TODO:
-    - Neutral reviews should be equal to the average of every other count.
-    - Consider oversampling instead of undersampling to balance.
-    """
-    
-    value_counts = df["overall"].value_counts()
-    
-    count_pos = value_counts[5] + value_counts[4]
-    
-    count_neg = value_counts[2] + value_counts[1] 
-    
-    # More positive than negative reviews
-    if count_pos > count_neg:
-        rows_to_drop = count_pos - count_neg
 
-        # Get indexes of random rows where rating is 4 or 5 (positive)
-        index = np.random.choice(
-            a=df.query("overall == 4 or overall == 5").index, 
-            size=rows_to_drop, 
-            replace=False
+    def extract_n_chunks(self, num_chunks: int = 1):
+        """
+        TODO:
+        - Implement capped iterator, ie. returning an iterator with max num of iterations.
+        - Implement automatic saving and transformations when outdir is specified
+        """
+        
+        raise NotImplementedError
+
+        for chunk in range(num_chunks):
+            ...
+
+
+    def _transform_chunk(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        The main transformation pipe of the chunk.
+        """
+
+        if self.features:
+            df = df.loc[:, self.features]
+
+        if self.balance_num_pos_neg_rating:
+            df = self._balance_reviews(df)
+
+        df[self.review_text_column] = (
+            df[self.review_text_column]
+            .fillna("")
         )
 
-    # More negative than positive reviews
-    elif count_pos < count_neg:
-        rows_to_drop = count_neg - count_pos
-        
-        # Get indexes of random rows where rating is 1 or 2 (negative)
-        index = np.random.choice(
-            a=df.query("overall == 1 or overall == 2").index, 
-            size=rows_to_drop, 
-            replace=False
+        if self.maximum_words:
+            df = df.apply(
+                lambda x: " ".join(x.split)[:self.maximum_words]
+            )
+
+        if self.drop_empty_reviews:
+            df = df[df[self.review_text_column] != ""]
+
+        return df
+
+
+    def _balance_reviews(
+            self, 
+            df: pd.DataFrame
+        ) -> pd.DataFrame:
+
+        """
+        TODO:
+        - Implement option for oversampling.
+        - Alpha property which determines the ratio of undersampling to oversampling.
+
+        Balances the number of negative and positive reviews in a chunk 
+        if `balance_num_neg_pos_reviews` is `True` by undersampling.
+
+        Balances the number of neutral reviews if `balance_neutral` is `True`, 
+        by undersampling.
+        """
+
+        assert (
+            self.ratings_column in df.columns 
+            and 
+            self.review_text_column in df.columns
         )
 
-    
-    df_balanced = df.drop(
-        axis=1,
-        index=index
-    )
+        value_counts = df[self.ratings_column].value_counts()
+        num_positive = value_counts[4] + value_counts[5]
+        num_negative = value_counts[1] + value_counts[2]
 
-    return df_balanced
+        if num_positive > num_negative:
+            rows_to_drop = num_positive - num_negative
 
-
-def fill_empty_reviews_convert_to_string(
-        df:pd.DataFrame, 
-        review_text_column:str="reviewText"
-    ) -> pd.DataFrame:
-
-    """
-    Fills in nan valued reviews with empty strings, then convert the column to string dtype.
-    """
-    
-    df[review_text_column] = (
-        df[review_text_column]
-        .fillna("")
-        .convert_dtypes(convert_string=True)
-    )
-
-    return df
-
-
-def cut_reviews_to_max_words(
-        df:pd.DataFrame, 
-        max_words:int, 
-        review_text_column:str="reviewText"
-    ) -> pd.DataFrame: 
-
-    """
-    Cuts reviews down to maximum soecified length.
-    """
-
-    cut_review_text = lambda x: " ".join(x.split()[:max_words])
-
-    df[review_text_column] = df[review_text_column].apply(cut_review_text)
-
-    return df
-
-
-
-def remove_empty_reviews(
-        df:pd.DataFrame, 
-        review_text_colum:str="reviewText"
-    ) -> pd.DataFrame:
-    
-    """
-    Remove rows where reviews are empty strings.
-    """
-
-    df = df.loc[
-        df[review_text_colum] != "", :
-    ]
-
-    return df
-
-
-def convert_column_to_dt(
-        df:pd.DataFrame, 
-        date_column:str="unixReviewTime", 
-        unit:str="s"
-    ) -> pd.DataFrame:
-
-    """
-    Converts the specified column to datetime format
-    """
-    
-    df[date_column] = pd.to_datetime(df[date_column], unit=unit)
-    return df
-
-
-def save_chunk(df, datapath:str=None, outpath:str=None) -> None:
-    """
-    Saves a loaded chunk/df, named based on `datapath`.
-
-    Either `datapath` or `outpath` must be specified.
-    """
-
-    if datapath:
+            index = np.random.choice(
+                a=df.query("overall == 4 or overall == 5").index, 
+                size=rows_to_drop, 
+                replace=False
+            )
         
-        path = pathlib.Path(datapath)
+        elif num_negative > num_positive:
+            rows_to_drop = num_negative - num_positive
+            
+            index = np.random.choice(
+                a=df.query("overall == 1 or overall == 2").index, 
+                size=rows_to_drop, 
+                replace=False
+        )
 
-        file_name = path.parts[-1].split(".")[0] + f"_partition_rows_{df.index[0]}_{df.index[-1]}"
+        df_balanced = df.drop(
+            axis=1,
+            index=index
+        )
+
+        if self.balance_neutral_reviews:
+            balanced_value_counts = df_balanced[self.ratings_column].value_counts()
+
+            num_neutral = balanced_value_counts[3]
+            num_non_neutral = df_balanced[self.ratings_column].count() - num_neutral
+
+            avg_value_count_non_neutral = num_non_neutral / 4
+
+            if num_neutral > avg_value_count_non_neutral:
+                rows_to_drop = num_neutral - avg_value_count_non_neutral
+
+                index = np.random.choice(
+                    a=df.query("overall == 3").index, 
+                    size=rows_to_drop, 
+                    replace=False
+                )
+
+                df_balanced = df.drop(
+                    axis=1,
+                    index=index
+                )
+
+
+        return df_balanced
         
-        df.to_csv(f"../../data/transformed/{file_name}.csv")
+    def _save_chunk(
+            self, 
+            df: pd.DataFrame
+        ) -> None:
 
-    elif outpath:
-        df.to_csv(outpath)
-    
-    else:
-        df.to_csv(f"backup/data_rows_{df.index[0]}_{df.index[-1]}")
-        print("WARNING: datapath or outpath must be specified, df was saved to 'backup'")
+        """
+        Saves the chunk to `self.outdir` if it has been specified.
+
+        Alternatively uses the callable stored in `self.save_method` to save the chunk.
+        """
+
+        save_path = f"{self.outdir}/amazon_reviews_chunk_{self._loaded_chunks}"
+
+        if self.save_method:
+            self.save_method(df, save_path)
+        
+        else:
+            save_path += ".csv"
+            df.to_csv()
