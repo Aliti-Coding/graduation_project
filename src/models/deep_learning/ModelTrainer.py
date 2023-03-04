@@ -6,6 +6,8 @@ from keras.optimizers import Optimizer, Adam
 from typing import Optional, List, Union, Literal
 from os import PathLike
 
+from time import time
+
 class ModelTrainer:
     def __init__(
             self,
@@ -72,3 +74,36 @@ class ModelTrainer:
         self.is_fit = True
 
         return self.history
+    
+
+    def stats(
+            self, 
+            y_true, 
+            y_pred, 
+            loss: Optional[Loss] = None, 
+            metrics: Optional[List[Metric]] = None
+        ) -> dict:
+
+        if not loss:
+            loss_value = {
+                self.loss.name:self.loss.call(y_true, y_pred)
+            }
+        elif loss:
+            loss_value = {
+                loss.name: loss.call(y_true, y_pred)
+            }
+
+        if not metrics:
+            {m.name: m.call(y_true, y_pred) for m in self.metrics}        
+        
+        elif metrics:
+            {m.name: m.call(y_true, y_pred) for m in metrics}
+        
+        
+        return {
+            "model_name": self.model.name,
+            "time": time(),
+            "loss": loss_value,
+            "metrics": metrics,
+            "trainable_weights": self.model.trainable_weights
+        }
