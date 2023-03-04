@@ -61,6 +61,7 @@ class ModelTrainer:
             
         ) -> dict:
 
+        self.train_start_time = time()
         self.history = self.model.fit(
             x=x,
             y=y,
@@ -71,6 +72,7 @@ class ModelTrainer:
             **kwargs
         )
 
+        self.train_end_time = time()
         self.is_fit = True
 
         return self.history
@@ -86,24 +88,31 @@ class ModelTrainer:
 
         if not loss:
             loss_value = {
-                self.loss.name:self.loss.call(y_true, y_pred)
+                self.loss.name: self.loss.call(y_true, y_pred).numpy()
             }
         elif loss:
             loss_value = {
-                loss.name: loss.call(y_true, y_pred)
+                loss.name: loss.call(y_true, y_pred.numpy())
             }
 
         if not metrics:
-            {m.name: m.call(y_true, y_pred) for m in self.metrics}        
+            metrics_value = {
+                m.name: m.call(y_true, y_pred) for m in self.metrics.numpy()
+            }        
         
         elif metrics:
-            {m.name: m.call(y_true, y_pred) for m in metrics}
+            metrics_value = {
+                m.name: m.call(y_true, y_pred) for m in metrics.numpy()
+            }
         
         
         return {
             "model_name": self.model.name,
-            "time": time(),
             "loss": loss_value,
             "metrics": metrics,
-            "trainable_weights": self.model.trainable_weights
+            "trainable_weights": self.model.trainable_weights,
+            "fit_params": self.history.params,
+            "train_time": self.train_end_time - self.train_start_time,
+            "train_start_time": self.train_start_time,
+            "train_end_time": self.train_end_time
         }
