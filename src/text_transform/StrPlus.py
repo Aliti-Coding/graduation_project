@@ -29,23 +29,25 @@ class StrPlus(str):
 
     def sentences(
             self,
-            qstn_mark: bool = True,
-            excl_mark: bool = True,
-            period: bool = True,
-            comma: bool = False,
-            keep_punctuation: bool = False,
-            symbols: str = None
+            symbols: str = r"!?.%",
+            keep_symbols: bool = False, 
         ):
-        pattern = r""
-        if qstn_mark: pattern += "?"
-        if excl_mark: pattern += "!"
-        if period: pattern += "."
-        if comma: pattern += ","
-        if symbols: pattern += symbols
 
-        pattern = fr"[{pattern}] "
+        n_pattern = "\\"
+        for idx,sb in enumerate(symbols):
+            n_pattern += sb
+            if idx != len(symbols)-1:
+                n_pattern += "|"
+                n_pattern += "\\"
         
-        if keep_punctuation:
-            pattern = fr"({pattern})" 
+        print(n_pattern)
+        if keep_symbols:
+            pattern = fr"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<={n_pattern})\s" 
+            # pattern = fr"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s" 
         
         return re.split(pattern, self)
+    
+
+
+s = StrPlus("hello. Is this a dream? it must be! bahaha%")
+print(s.sentences(keep_symbols=True))
