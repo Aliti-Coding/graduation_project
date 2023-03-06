@@ -29,7 +29,7 @@ class AmazonReviewsExtractor(JsonReader):
             ratings_column: str = "overall",
             balance_num_pos_neg_ratings: bool = True,
             balance_neutral_reviews: bool = False,
-            convert_dates: Union[bool, List[str]] = ["reviewTime"],
+            convert_dates: Union[bool, List[str]] = ["unixReviewTime"],
             outdir: Optional[Union[str, os.PathLike]] = None,
             save_method: Optional[Callable[[pd.DataFrame, os.PathLike], None]] = None
         ) -> None:
@@ -142,7 +142,7 @@ class AmazonReviewsExtractor(JsonReader):
             return self._transform_chunk(df)
 
         elif self.outdir:
-            self._save_chunk(df)
+            self._save_chunk(self._transform_chunk(df))
     
     def transform(self, df:pd.DataFrame) -> Union[pd.DataFrame, None]:
         """
@@ -218,12 +218,12 @@ class AmazonReviewsExtractor(JsonReader):
         by undersampling.
         """
 
-        assert (
-            self.ratings_column in df.columns 
-            and 
-            self.review_text_column in df.columns,
-            "Ratings column and review text column must be in DataFrame to balance reviews."
-        )
+        if not (
+            self.ratings_column in df.columns \
+            and \
+            self.review_text_column in df.columns
+        ):
+            raise ValueError("Ratings column and review text column must be in DataFrame to balance reviews.")
 
         value_counts = df[self.ratings_column].value_counts()
         num_positive = value_counts[4] + value_counts[5]
@@ -295,4 +295,4 @@ class AmazonReviewsExtractor(JsonReader):
         
         else:
             save_path += ".csv"
-            df.to_csv()
+            df.to_csv(save_path, index=False)
