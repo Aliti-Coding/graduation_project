@@ -1,16 +1,22 @@
 import keras
-from transformers import TFDistilBertModel
+from transformers import TFDistilBertModel, DistilBertConfig
 from keras import Model
-
+from typing import Optional
 
 class DistilBertModel(TFDistilBertModel):
     def __init__(
             self,
-            model_name: str
+            model_name: str,
+            config: Optional[DistilBertConfig] = None
         ):
         
+        if config:
+            model = TFDistilBertModel(config)
+        else:
+            model = TFDistilBertModel.from_pretrained(model_name)
+        
         self.model = self._add_regression_head(
-            TFDistilBertModel.from_pretrained(model_name)
+            model
         )
     
 
@@ -31,9 +37,9 @@ class DistilBertModel(TFDistilBertModel):
             attention_mask = attention_mask
         )
         
-        x = encoded[:,0,:]
+        x = encoded[0][:,0,:]
 
-        x = keras.layers.Dense(768, activation="relu")(x)
+        x = keras.layers.Dense(512, activation="relu")(x)
         x = keras.layers.Dense(32, activation="relu")(x)
         outputs = keras.layers.Dense(1)(x)
 
