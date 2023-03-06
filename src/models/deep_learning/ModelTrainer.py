@@ -43,7 +43,7 @@ class ModelTrainer(Model):
             x, 
             y,
             epochs,
-            callbacks: Union[List[Callback], Literal["default"]] = "default",
+            callbacks: Optional[Union[List[Callback], Literal["default"]]] = "default",
             validation_data: Optional[tuple] = None,
             batch_size: Optional[int] = None,
             **kwargs
@@ -68,7 +68,7 @@ class ModelTrainer(Model):
             batch_size=batch_size,
             epochs=epochs,
             validation_data=validation_data,
-            callbacks=callbacks
+            callbacks=callbacks,
             **kwargs
         )
 
