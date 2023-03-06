@@ -29,7 +29,7 @@ class StrPlus(str):
 
     def sentences(
             self,
-            symbols: str = r"!?.%",
+            symbols: str = r"!?.",
             keep_symbols: bool = False, 
         ):
 
@@ -39,15 +39,14 @@ class StrPlus(str):
             if idx != len(symbols)-1:
                 n_pattern += "|"
                 n_pattern += "\\"
-        
+
         print(n_pattern)
         if keep_symbols:
             pattern = fr"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<={n_pattern})\s" 
             # pattern = fr"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s" 
+        elif not keep_symbols:
+            if self[-1] in symbols:
+                self = self[:-1]
+            pattern = fr"[{symbols}]\s"
         
         return re.split(pattern, self)
-    
-
-
-s = StrPlus("hello. Is this a dream? it must be! bahaha%")
-print(s.sentences(keep_symbols=True))
