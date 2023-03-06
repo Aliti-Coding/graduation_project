@@ -1,0 +1,35 @@
+from keras import Input, Model, layers
+from typing import Optional, List
+
+class BertRegressorHead:
+    def add_head(
+            model: Model,
+            dropout: Optional[float] = 0.2,
+            units: List[int] = [256, 32],
+        ) -> Model:
+
+        input_ids = Input(shape=(None,), dtype='int32')
+        attention_mask = Input(shape=(None,), dtype='int32')
+        
+        encoded = model(
+            input_ids = input_ids,
+            attention_mask = attention_mask
+        )
+
+        x = encoded[0][:,0,:]
+
+        for unit in units:
+            x = layers.Dense(unit, activation="relu")(x)
+            x = layers.Dropout(dropout)(x)
+
+        outputs = layers.Dense(1)(x)
+
+        model_w_regressor_head = Model(
+            inputs = {
+                "input_ids": input_ids, 
+                "attention_mask": attention_mask
+            }, 
+            outputs = outputs
+        )
+
+        return model_w_regressor_head
