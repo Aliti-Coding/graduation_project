@@ -40,7 +40,6 @@ class StrPlus(str):
                 n_pattern += "|"
                 n_pattern += "\\"
 
-        print(n_pattern)
         if keep_symbols:
             pattern = fr"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<={n_pattern})\s" 
             # pattern = fr"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s" 
