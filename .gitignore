@@ -9,7 +9,12 @@ __pycache__/
 # C extensions
 *.so
 
+# Model checkpoints
 ckpt
+
+# Testing file
+testing.ipynb
+
 # Key files
 *.key
 
