@@ -17,7 +17,7 @@ class NewsApiLoader(NewsApiClient):
     def __init__(
             self,
             api_key: str,
-            news_sources: Optional[str] = None,
+            sources: Optional[str] = None,
             source_language: Optional[str] = "en",
         ) -> None:
 
@@ -39,15 +39,15 @@ class NewsApiLoader(NewsApiClient):
             session=CachedSession("news_api_cache")
         )
         
-        self.news_sources = news_sources
+        self.sources = sources
 
         self.source_language = source_language
 
 
     def get_everything(
             self,
-            page: Optional[int] = None,
-            pages: Optional[int] = None,
+            page: Optional[int] = 1,
+            pages: Optional[int] = 1,
             page_size: Optional[int] = 100,
             **kwargs
 
@@ -62,6 +62,7 @@ class NewsApiLoader(NewsApiClient):
             raw_articles += super().get_everything(
                 page=p,
                 page_size=page_size,
+                sources=self.sources
                 **kwargs
             )["articles"]
         
@@ -70,8 +71,8 @@ class NewsApiLoader(NewsApiClient):
 
     def get_top_headlines(
             self,
-            page: Optional[int] = None,
-            pages: Optional[int] = None,
+            page: Optional[int] = 1,
+            pages: Optional[int] = 1,
             page_size: Optional[int] = 100,
             **kwargs
         ) -> None:
@@ -85,6 +86,7 @@ class NewsApiLoader(NewsApiClient):
             raw_articles += super().get_top_headlines(
                 page=p,
                 page_size=page_size,
+                sources=self.sources
                 **kwargs
             )["articles"]
         
