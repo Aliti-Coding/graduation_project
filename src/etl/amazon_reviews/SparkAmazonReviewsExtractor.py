@@ -92,7 +92,11 @@ class SparkAmazonReviewsExtractor:
             )
 
         if self.maximum_words:
-            ...
+            df.foreach(
+                lambda x: " ".join(
+                    x.reviewText.split()
+                )[:self.maximum_words]
+            )
 
         return df
 
