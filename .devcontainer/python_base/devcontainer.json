@@ -1,0 +1,9 @@
+{
+    "name": "python_base",
+    "build": {"dockerfile":"Dockerfile"},
+    "customizations": {
+        "vscode": {
+          "extensions": ["ms-python.python", "vscode.git"]
+        }
+      }
+}
