@@ -46,8 +46,8 @@ class NewsApiLoader(NewsApiClient):
 
     def get_everything(
             self,
-            page: Optional[int] = None,
-            pages: Optional[int] = None,
+            page: Optional[int] = 1,
+            pages: Optional[int] = 1,
             page_size: Optional[int] = 100,
             **kwargs
 
@@ -62,6 +62,7 @@ class NewsApiLoader(NewsApiClient):
             raw_articles += super().get_everything(
                 page=p,
                 page_size=page_size,
+                sources = self.news_sources, 
                 **kwargs
             )["articles"]
         
