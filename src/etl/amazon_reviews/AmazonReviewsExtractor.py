@@ -2,11 +2,11 @@ import pandas as pd
 import numpy as np
 from numpy.random import RandomState
 import os
+from pathlib import Path
 
 from pandas.io.json._json import JsonReader
 
 from typing import List, Optional, Union, Callable
-
 
 
 
@@ -29,7 +29,7 @@ class AmazonReviewsExtractor(JsonReader):
             ratings_column: str = "overall",
             balance_num_pos_neg_ratings: bool = True,
             balance_neutral_reviews: bool = False,
-            convert_dates: Union[bool, List[str]] = ["unixReviewTime"],
+            convert_dates: Optional[List[str]] = ["unixReviewTime"],
             outdir: Optional[Union[str, os.PathLike]] = None,
             save_method: Optional[Callable[[pd.DataFrame, os.PathLike], None]] = None
         ) -> None:
@@ -80,18 +80,14 @@ class AmazonReviewsExtractor(JsonReader):
             now saves each chunk to `outdir` instead of returning a DataFrame.
         
         save_method: function or callable, optional,
-            if not specified chunks are saved as `.csv` files. Use this to save chunks in other file formats.
-            The callable should take two arguments a `DataFrane` and a `PathLike` which can be overridden for different ways of saving.
+            if not specified chunks are saved as `.parquet` files. Use this variable to save chunks in other file formats.
+            The callable should take two arguments a `DataFrane` and a `PathLike` used to overide saving method.
 
 
         ## Examples
 
         Example `save_method` function: 
             >>> lambda df, path: pd.DataFrame.to_json(df, path)
-
-        
-
-        
         """
         super().__init__(
             path_or_buf,
@@ -113,7 +109,7 @@ class AmazonReviewsExtractor(JsonReader):
             storage_options = None,
         )
         
-        self.path_or_buf = path_or_buf
+        self.path_or_buf = Path(path_or_buf)
         self.chunksize = chunksize
         self.features = features
         self.maximum_words = maximum_words
@@ -287,12 +283,12 @@ class AmazonReviewsExtractor(JsonReader):
 
         Alternatively uses the callable stored in `self.save_method` to save the chunk.
         """
-
-        save_path = f"{self.outdir}/amazon_reviews_chunk_{self._loaded_chunks}"
+        old_filename = self.path_or_buf.parts[-1].split(".")[0]
+        save_path = f"{self.outdir}/{old_filename}_{self._loaded_chunks}"
 
         if self.save_method:
             self.save_method(df, save_path)
         
         else:
-            save_path += ".csv"
-            df.to_csv(save_path, index=False)
+            save_path += ".parquet"
+            df.to_parquet(save_path, index=False)
